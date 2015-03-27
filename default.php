@@ -335,17 +335,18 @@ class wechat {
     public function saveGroup()
     {
         $params['q']="id:$this->userid";
-        $params['fl']="attend_groupid";
+        $params['fl']="savegroup";
         $save_result=$this->solrUser->select($params);
-        $save_id=$save_result['data']['response']['docs'][0]['attend_groupid'];
-        if(empty($save_id))
+        $group_id=$save_result['data']['response']['docs'][0]['savegroup'];
+        if(empty($group_id))
         {
             $rtn['error']="您目前还没有收藏乐群";
         }
         else{
             $params=array();
             $params['fl']="id,title,imageurl";
-            for($i=0;$i<(count($save_id));$i++)
+            $save_id=explode('|',$group_id);
+            for($i=0;$i<(count($save_id)-1);$i++)
             {
                 $params['q']="id:".(string)$save_id[$i];
                 $save_bird=$this->solrGroup->select($params);
@@ -720,7 +721,7 @@ class wechat {
                         $resultItem="";
                         for($i=0;$i<$num;$i++)
                         {   
-                            $url="http://www.zhaole365.com/zlgroups/".$result['groupid'][$i]."&userid=".$this->userid;
+                            $url="http://123.56.93.141/s_group.php?groupid=".$result['groupid'][$i]."&userid=".$this->userid;
                             $resultItem .=sprintf($this->textItem,$result['title'][$i],$result['imageurl'][$i],$url);
                         }
                         $resultStr = sprintf($this->textImg,$fromUsername,$toUsername,
